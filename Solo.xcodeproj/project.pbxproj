@@ -1,0 +1,310 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BFIL00000000000000000001 /* SoloApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000001 /* SoloApp.swift */; };
+		BFIL00000000000000000002 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000002 /* StatusItemController.swift */; };
+		BFIL00000000000000000003 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000003 /* FocusSession.swift */; };
+		BFIL00000000000000000004 /* SmartRestoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000004 /* SmartRestoreController.swift */; };
+		BFIL00000000000000000005 /* WindowInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000005 /* WindowInspector.swift */; };
+		BFIL00000000000000000006 /* PermissionMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000006 /* PermissionMonitor.swift */; };
+		BFIL00000000000000000007 /* ActivationGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000007 /* ActivationGuard.swift */; };
+		BFIL00000000000000000009 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000010 /* AppDelegate.swift */; };
+		BFIL00000000000000000008 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = PKGP00000000000000000001 /* KeyboardShortcuts */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FREF00000000000000000001 /* SoloApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoloApp.swift; sourceTree = "<group>"; };
+		FREF00000000000000000002 /* StatusItemController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItemController.swift; sourceTree = "<group>"; };
+		FREF00000000000000000003 /* FocusSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSession.swift; sourceTree = "<group>"; };
+		FREF00000000000000000004 /* SmartRestoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartRestoreController.swift; sourceTree = "<group>"; };
+		FREF00000000000000000005 /* WindowInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowInspector.swift; sourceTree = "<group>"; };
+		FREF00000000000000000006 /* PermissionMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionMonitor.swift; sourceTree = "<group>"; };
+		FREF00000000000000000007 /* ActivationGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationGuard.swift; sourceTree = "<group>"; };
+		FREF00000000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FREF00000000000000000010 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FREF00000000000000000009 /* Solo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Solo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		PHAS00000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFIL00000000000000000008 /* KeyboardShortcuts in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GRUP00000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				GRUP00000000000000000002 /* Solo */,
+				GRUP00000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GRUP00000000000000000002 /* Solo */ = {
+			isa = PBXGroup;
+			children = (
+				FREF00000000000000000001 /* SoloApp.swift */,
+				FREF00000000000000000010 /* AppDelegate.swift */,
+				FREF00000000000000000002 /* StatusItemController.swift */,
+				FREF00000000000000000003 /* FocusSession.swift */,
+				FREF00000000000000000004 /* SmartRestoreController.swift */,
+				FREF00000000000000000005 /* WindowInspector.swift */,
+				FREF00000000000000000006 /* PermissionMonitor.swift */,
+				FREF00000000000000000007 /* ActivationGuard.swift */,
+				FREF00000000000000000008 /* Info.plist */,
+			);
+			path = Solo;
+			sourceTree = "<group>";
+		};
+		GRUP00000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FREF00000000000000000009 /* Solo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TARG00000000000000000001 /* Solo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CLST00000000000000000002 /* Build configuration list for PBXNativeTarget "Solo" */;
+			buildPhases = (
+				PHAS00000000000000000001 /* Sources */,
+				PHAS00000000000000000002 /* Frameworks */,
+				PHAS00000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Solo;
+			packageProductDependencies = (
+				PKGP00000000000000000001 /* KeyboardShortcuts */,
+			);
+			productName = Solo;
+			productReference = FREF00000000000000000009 /* Solo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJ00000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					TARG00000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = CLST00000000000000000001 /* Build configuration list for PBXProject "Solo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GRUP00000000000000000001;
+			packageReferences = (
+				PKGR00000000000000000001 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+			);
+			productRefGroup = GRUP00000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TARG00000000000000000001 /* Solo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		PHAS00000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		PHAS00000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFIL00000000000000000001 /* SoloApp.swift in Sources */,
+				BFIL00000000000000000009 /* AppDelegate.swift in Sources */,
+				BFIL00000000000000000002 /* StatusItemController.swift in Sources */,
+				BFIL00000000000000000003 /* FocusSession.swift in Sources */,
+				BFIL00000000000000000004 /* SmartRestoreController.swift in Sources */,
+				BFIL00000000000000000005 /* WindowInspector.swift in Sources */,
+				BFIL00000000000000000006 /* PermissionMonitor.swift in Sources */,
+				BFIL00000000000000000007 /* ActivationGuard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CONF00000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CONF00000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		CONF00000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Solo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.solo.Solo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CONF00000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Solo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.solo.Solo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CLST00000000000000000001 /* Build configuration list for PBXProject "Solo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CONF00000000000000000001 /* Debug */,
+				CONF00000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CLST00000000000000000002 /* Build configuration list for PBXNativeTarget "Solo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CONF00000000000000000003 /* Debug */,
+				CONF00000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		PKGR00000000000000000001 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		PKGP00000000000000000001 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKGR00000000000000000001 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = PROJ00000000000000000001 /* Project object */;
+}

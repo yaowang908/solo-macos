@@ -1,0 +1,35 @@
+schema: spec-driven
+
+context: |
+  Solo — a lightweight macOS menu bar utility (agent-style app, no Dock icon).
+  Two features: Solo Focus (hide all other apps, reversible session) and
+  Smart Restore (un-minimize a window when activating an app whose windows
+  are all minimized). Full PRD lives at Solo-PRD.md in the repo root.
+
+  Tech stack & platform:
+  - Swift, AppKit (NSStatusItem, NSRunningApplication, AXUIElement)
+  - SwiftUI only for settings UI (when it exists)
+  - macOS 14+ (Sonoma), Apple Silicon
+  - Xcode project; dependency via SPM: sindresorhus/KeyboardShortcuts for hotkeys
+
+  Key decisions already made:
+  - Freeware, open source on GitHub. Prototype phase: local unsigned builds
+    for the developer only; signing/notarization/Homebrew tap come later.
+  - No Sparkle; updates via Homebrew eventually.
+  - Not sandboxed (Accessibility control requires it); never App Store.
+  - Permission split: Solo Focus works WITHOUT Accessibility permission
+    (NSRunningApplication.hide/unhide). Only Smart Restore requires
+    Accessibility; the permission ask is attached to that feature, not app
+    launch. Smart Restore is "enabled by default once permission is granted".
+  - Smart Restore window-selection priority for MVP: main/focused document
+    window → largest minimized normal window → any eligible minimized normal
+    window. Focus-history tracking (per-app AX observers) is deferred.
+  - Smart Restore must suppress reactions to activation events caused by
+    Solo's own hide/unhide operations (feature interaction guard).
+  - No telemetry, no network calls, no accounts.
+
+rules:
+  proposal:
+    - Include a Non-goals section
+  tasks:
+    - Each task should be independently verifiable by running the app

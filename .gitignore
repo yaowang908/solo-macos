@@ -1,0 +1,20 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcuserdatad/
+xcuserdata/
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+Package.resolved
+
+# macOS
+.DS_Store
+
+# Xcode project user state (keep the shared project, ignore per-user cruft)
+Solo.xcodeproj/xcuserdata/
+Solo.xcodeproj/project.xcworkspace/xcuserdata/
+Solo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
