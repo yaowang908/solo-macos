@@ -49,7 +49,10 @@ final class PermissionMonitor {
     }
 
     /// Plain-language explainer with a deep link to the Accessibility settings pane.
-    func presentExplainer() {
+    /// Returns `true` if the user chose to proceed (opened Settings), `false` if
+    /// they declined ("Not Now").
+    @discardableResult
+    func presentExplainer() -> Bool {
         let alert = NSAlert()
         alert.alertStyle = .informational
         alert.messageText = "Smart Restore needs Accessibility access"
@@ -67,7 +70,9 @@ final class PermissionMonitor {
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
             openAccessibilitySettings()
+            return true
         }
+        return false
     }
 
     func openAccessibilitySettings() {

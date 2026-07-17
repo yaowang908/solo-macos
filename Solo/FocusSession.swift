@@ -60,10 +60,15 @@ final class FocusSession {
             guard app.processIdentifier != soloPid else { continue } // never hide Solo itself
             guard app.processIdentifier != frontmostPid else { continue } // keep the current app untouched
 
-            if app.hide() {
-                recorded.append(HiddenApp(pid: app.processIdentifier,
-                                          bundleIdentifier: app.bundleIdentifier))
-            }
+            // Record intent, not the return value: `NSRunningApplication.hide()`
+            // is documented to return whether the request "succeeded", but on
+            // current macOS it can hide the app visually while still returning
+            // false. Gating the session record on that boolean loses the app and
+            // makes restore impossible. Since `unhide()` is idempotent, recording
+            // every app we asked to hide is both correct and safe.
+            app.hide()
+            recorded.append(HiddenApp(pid: app.processIdentifier,
+                                      bundleIdentifier: app.bundleIdentifier))
         }
 
         hiddenApps = recorded
@@ -81,11 +86,12 @@ final class FocusSession {
             guard let app = NSRunningApplication(processIdentifier: entry.pid) else {
                 continue // app quit mid-session: skip without error
             }
-            // Respect a manual unhide during the session; unhide() on a visible
-            // app is a no-op, but guarding keeps the intent explicit and idempotent.
-            if app.isHidden {
-                app.unhide()
-            }
+            // Unhide unconditionally. `unhide()` only ever unhides, so it is a
+            // harmless no-op for an app the user manually unhid mid-session
+            // (idempotent restore). We must NOT gate on `isHidden`: that KVO
+            // value can read stale right after our own `hide()`, which would
+            // skip the unhide and leave the app hidden for good.
+            app.unhide()
         }
 
         hiddenApps = nil

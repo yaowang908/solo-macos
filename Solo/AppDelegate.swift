@@ -66,10 +66,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func requestSmartRestorePermission() {
-        permissionMonitor.presentExplainer()
+        // Live re-check before prompting: the cached trust flag can be stale (the
+        // user may have granted access externally or in a prior session). If we
+        // already have permission there is nothing to ask for.
+        if permissionMonitor.refresh() {
+            permissionMonitor.stopPolling()
+            statusController.refresh()
+            return
+        }
+        let proceed = permissionMonitor.presentExplainer()
+        guard proceed else {
+            // User chose "Not Now": disable Smart Restore rather than leaving it
+            // enabled-but-inert. Re-enabling it from the menu re-prompts.
+            setSmartRestoreEnabled(false)
+            return
+        }
         if !permissionMonitor.refresh() {
             permissionMonitor.startPolling()
         }
+    }
+
+    private func setSmartRestoreEnabled(_ enabled: Bool) {
+        UserDefaults.standard.set(enabled, forKey: Self.smartRestoreDefaultsKey)
+        smartRestore.setEnabled(enabled)
+        if !enabled {
+            permissionMonitor.stopPolling()
+        }
+        statusController.refresh()
     }
 }
 
@@ -88,15 +111,11 @@ extension AppDelegate: StatusItemDelegate {
 
     func toggleSmartRestore() {
         let newValue = !smartRestore.isEnabled
-        UserDefaults.standard.set(newValue, forKey: Self.smartRestoreDefaultsKey)
-        smartRestore.setEnabled(newValue)
-
+        setSmartRestoreEnabled(newValue)
+        // Enabling while untrusted re-prompts; declining flips it back off.
         if newValue && !permissionMonitor.isTrusted {
             requestSmartRestorePermission()
-        } else if !newValue {
-            permissionMonitor.stopPolling()
         }
-        statusController.refresh()
     }
 
     func quit() {

@@ -23,7 +23,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let toggleItem = NSMenuItem(title: "Toggle Solo Focus", action: nil, keyEquivalent: "")
     private let restoreItem = NSMenuItem(title: "Restore Windows", action: nil, keyEquivalent: "")
     private let smartRestoreItem = NSMenuItem(title: "Smart Restore Minimized Windows", action: nil, keyEquivalent: "")
-    private let quitItem = NSMenuItem(title: "Quit Solo", action: nil, keyEquivalent: "q")
+    private let quitItem = NSMenuItem(title: "Quit Solo", action: nil, keyEquivalent: "")
 
     override init() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)

@@ -35,5 +35,5 @@
 
 ## 6. Prototype validation
 
-- [ ] 6.1 Run the PRD §6.3 behavior table end-to-end plus the feature-interaction scenario (Solo Focus toggle with minimized windows present) and fix anything that violates a spec scenario
-- [ ] 6.2 Sanity-check idle footprint (Activity Monitor: negligible CPU when idle, resident memory in the tens of MB) and tune the ActivationGuard window if suppression logs show gaps
+- [x] 6.1 Run the PRD §6.3 behavior table end-to-end plus the feature-interaction scenario (Solo Focus toggle with minimized windows present) and fix anything that violates a spec scenario
+- [x] 6.2 Sanity-check idle footprint (Activity Monitor: negligible CPU when idle, resident memory in the tens of MB) and tune the ActivationGuard window if suppression logs show gaps
