@@ -55,9 +55,11 @@ final class SmartRestoreController {
     }
 
     private func handleActivation(_ note: Notification) {
-        guard isOperational else { return }
+        let bundle = (note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.bundleIdentifier ?? "?"
+        DebugLog.write("activation \(bundle): enabled=\(isEnabled) trusted=\(trustProvider()) suppressing=\(activationGuard.isSuppressing)")
+        guard isOperational else { DebugLog.write("  -> skip: not operational"); return }
         // Ignore activations caused by Solo's own hide/unhide/raise.
-        guard !activationGuard.isSuppressing else { return }
+        guard !activationGuard.isSuppressing else { DebugLog.write("  -> skip: suppressing"); return }
 
         guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
             return
@@ -66,16 +68,17 @@ final class SmartRestoreController {
 
         // Unconditionally ignore Solo itself and any app in the Focus session.
         guard pid != soloPid else { return }
-        guard !focusSession.sessionPids.contains(pid) else { return }
+        guard !focusSession.sessionPids.contains(pid) else { DebugLog.write("  -> skip: in focus session"); return }
         // A Cmd+H hidden app must not be unhidden by Smart Restore.
-        guard !app.isHidden else { return }
+        guard !app.isHidden else { DebugLog.write("  -> skip: app hidden (Cmd+H)"); return }
 
         // Fast path: a visible normal window already exists → do nothing (common case).
-        guard !WindowInspector.hasVisibleNormalWindow(pid: pid) else { return }
+        guard !WindowInspector.hasVisibleNormalWindow(pid: pid) else { DebugLog.write("  -> skip: has visible window"); return }
 
         // Restore is a self-operation: bracket it so the resulting activation is suppressed.
         activationGuard.noteSelfOperation()
-        WindowInspector.restoreMinimizedWindow(pid: pid)
+        let restored = WindowInspector.restoreMinimizedWindow(pid: pid)
         activationGuard.noteSelfOperation()
+        DebugLog.write("  -> restore attempted, result=\(restored)")
     }
 }

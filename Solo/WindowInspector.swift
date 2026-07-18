@@ -26,11 +26,13 @@ enum WindowInspector {
                   ownerPid == pid else { continue }
             // Layer 0 = normal application windows; higher layers are panels/menus/etc.
             let layer = (info[kCGWindowLayer as String] as? NSNumber)?.intValue ?? -1
-            guard layer == 0 else { continue }
-            guard let boundsDict = info[kCGWindowBounds as String] as? NSDictionary else { continue }
             var rect = CGRect.zero
-            guard CGRectMakeWithDictionaryRepresentation(boundsDict as CFDictionary, &rect) else { continue }
-            if rect.width >= minWidth && rect.height >= minHeight {
+            if let boundsDict = info[kCGWindowBounds as String] as? NSDictionary {
+                CGRectMakeWithDictionaryRepresentation(boundsDict as CFDictionary, &rect)
+            }
+            let counts = layer == 0 && rect.width >= minWidth && rect.height >= minHeight
+            DebugLog.write("    vis pid \(pid): layer=\(layer) \(Int(rect.width))x\(Int(rect.height)) -> \(counts ? "VISIBLE" : "ignored")")
+            if counts {
                 return true
             }
         }
@@ -42,15 +44,31 @@ enum WindowInspector {
     @discardableResult
     static func restoreMinimizedWindow(pid: pid_t) -> Bool {
         let appElement = AXUIElementCreateApplication(pid)
-        guard let windows = axWindows(of: appElement) else { return false }
+        guard let windows = axWindows(of: appElement) else {
+            DebugLog.write("    ax pid \(pid): kAXWindows unreadable (no AX support?)")
+            return false
+        }
 
-        let minimized = windows.filter(isStandardMinimized)
+        // Diagnostic dump: every window's role/subrole/minimized/size, so we can
+        // see exactly why nonstandard apps (Catalyst, Electron, Outlook) fail.
+        for w in windows {
+            let role = copyAttribute(w, kAXRoleAttribute) as? String ?? "nil"
+            let subrole = copyAttribute(w, kAXSubroleAttribute) as? String ?? "nil"
+            let minimized = boolAttribute(w, kAXMinimizedAttribute)
+            DebugLog.write("    ax pid \(pid): role=\(role) subrole=\(subrole) minimized=\(minimized) area=\(Int(windowArea(w)))")
+        }
+
+        let minimized = windows.filter(isRestorableMinimized)
+        DebugLog.write("    ax pid \(pid): \(windows.count) windows, \(minimized.count) pass the restorable-minimized filter")
         guard let target = selectWindow(minimized) else { return false }
 
         // De-minimize.
         let unminimized = AXUIElementSetAttributeValue(
             target, kAXMinimizedAttribute as CFString, kCFBooleanFalse) == .success
-        guard unminimized else { return false }
+        guard unminimized else {
+            DebugLog.write("    ax pid \(pid): set AXMinimized=false FAILED")
+            return false
+        }
 
         // Raise + focus.
         AXUIElementPerformAction(target, kAXRaiseAction as CFString)
@@ -77,11 +95,27 @@ enum WindowInspector {
         return (value as? Bool) ?? false
     }
 
-    /// A minimized window with the standard window subrole (excludes panels, sheets, dialogs).
-    private static func isStandardMinimized(_ window: AXUIElement) -> Bool {
+    /// Subroles that must never be restored even if they somehow end up minimized.
+    private static let excludedSubroles: Set<String> = [
+        kAXSystemDialogSubrole as String,
+        kAXFloatingWindowSubrole as String,
+        kAXSystemFloatingWindowSubrole as String,
+    ]
+
+    /// A minimized window eligible for restore. Minimized-ness is itself the strong
+    /// signal — sheets, popovers, and modal dialogs cannot be user-minimized to the
+    /// Dock — so this is a blocklist, not an allowlist: requiring
+    /// `subrole == AXStandardWindow` wrongly rejects Outlook and Notes, whose
+    /// minimized main windows report `AXDialog` on current macOS.
+    private static func isRestorableMinimized(_ window: AXUIElement) -> Bool {
         guard boolAttribute(window, kAXMinimizedAttribute) else { return false }
-        guard let subrole = copyAttribute(window, kAXSubroleAttribute) as? String else { return false }
-        return subrole == (kAXStandardWindowSubrole as String)
+        guard (copyAttribute(window, kAXRoleAttribute) as? String) == (kAXWindowRole as String) else { return false }
+        if let subrole = copyAttribute(window, kAXSubroleAttribute) as? String,
+           excludedSubroles.contains(subrole) {
+            return false
+        }
+        // Same "real window" size floor as the CGWindowList visibility check.
+        return windowArea(window) >= minWidth * minHeight
     }
 
     private static func windowArea(_ window: AXUIElement) -> CGFloat {

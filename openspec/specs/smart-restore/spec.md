@@ -25,6 +25,10 @@ When Smart Restore is enabled and an eligible application becomes active, Solo S
 - **WHEN** an app hidden with `Command+H` becomes active
 - **THEN** Solo does not unhide it as part of Smart Restore
 
+#### Scenario: Re-selecting the already-active app is out of scope
+- **WHEN** the active app's windows are all minimized and the user re-selects that same app (e.g. `Command+Tab` back to it) without focus ever leaving it
+- **THEN** Solo takes no action, because macOS emits no activation event for re-selecting the active app (verified limitation of activation-based observation; a Dock icon click on that app is handled natively by macOS itself)
+
 ### Requirement: Window selection priority
 When multiple minimized normal windows exist, Solo SHALL select in this order: (1) the app's main or focused document window if identifiable, (2) the largest minimized normal window, (3) any eligible minimized normal window. Non-normal windows (panels, sheets, modal dialogs, full-screen windows) MUST NOT be selected.
 

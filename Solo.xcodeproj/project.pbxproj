@@ -15,6 +15,7 @@
 		BFIL00000000000000000006 /* PermissionMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000006 /* PermissionMonitor.swift */; };
 		BFIL00000000000000000007 /* ActivationGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000007 /* ActivationGuard.swift */; };
 		BFIL00000000000000000009 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000010 /* AppDelegate.swift */; };
+		BFIL00000000000000000011 /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000011 /* DebugLog.swift */; };
 		BFIL00000000000000000008 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = PKGP00000000000000000001 /* KeyboardShortcuts */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 		FREF00000000000000000007 /* ActivationGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationGuard.swift; sourceTree = "<group>"; };
 		FREF00000000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FREF00000000000000000010 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FREF00000000000000000011 /* DebugLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLog.swift; sourceTree = "<group>"; };
 		FREF00000000000000000009 /* Solo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Solo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -62,6 +64,7 @@
 				FREF00000000000000000005 /* WindowInspector.swift */,
 				FREF00000000000000000006 /* PermissionMonitor.swift */,
 				FREF00000000000000000007 /* ActivationGuard.swift */,
+				FREF00000000000000000011 /* DebugLog.swift */,
 				FREF00000000000000000008 /* Info.plist */,
 			);
 			path = Solo;
@@ -157,6 +160,7 @@
 				BFIL00000000000000000005 /* WindowInspector.swift in Sources */,
 				BFIL00000000000000000006 /* PermissionMonitor.swift in Sources */,
 				BFIL00000000000000000007 /* ActivationGuard.swift in Sources */,
+				BFIL00000000000000000011 /* DebugLog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
