@@ -82,3 +82,8 @@ Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
   match the tag, and make sure `README.md` reflects any behavior changes.
 - Release builds stay **ad-hoc signed and un-notarized** (see signing rule above);
   the README documents the `xattr -cr` quarantine-clearing step for users.
+- **Homebrew tap**: `github.com/yaowang908/homebrew-tap` hosts `Casks/solo.rb`
+  (install: `brew install --cask --no-quarantine yaowang908/tap/solo`). After each
+  release, update the cask's `version` and `sha256`
+  (`shasum -a 256 Solo-vX.Y.Z.zip` on the published asset) and push the tap repo.
+  Verify with `brew fetch --cask yaowang908/tap/solo`.
