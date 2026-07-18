@@ -22,6 +22,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var smartRestore: SmartRestoreController!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        terminateOtherInstances()
+
         let defaults = UserDefaults.standard
         // Smart Restore default is enabled (smart-restore + accessibility-permission specs).
         if defaults.object(forKey: Self.smartRestoreDefaultsKey) == nil {
@@ -63,6 +65,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         smartRestore?.stopObserving()
         permissionMonitor.stopPolling()
+    }
+
+    /// Single-instance policy: the newly launched copy wins. Lets a dev build
+    /// (run from DerivedData) take over from the Homebrew copy in /Applications
+    /// and vice versa — two instances would double-register the hotkey and the
+    /// activation observer. `terminate()` is graceful, so the dying instance's
+    /// applicationWillTerminate still unhides any Focus-session apps.
+    private func terminateOtherInstances() {
+        let myPid = ProcessInfo.processInfo.processIdentifier
+        let bundleId = Bundle.main.bundleIdentifier ?? "com.solo.Solo"
+        let others = NSRunningApplication.runningApplications(withBundleIdentifier: bundleId)
+            .filter { $0.processIdentifier != myPid }
+        guard !others.isEmpty else { return }
+
+        for app in others {
+            DebugLog.write("single-instance: asking pid \(app.processIdentifier) (\(app.bundleURL?.path ?? "?")) to quit")
+            app.terminate()
+        }
+        // Escalate only if a copy hangs; the run loop keeps ticking so
+        // isTerminated updates by the time this fires.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            for app in others where !app.isTerminated {
+                DebugLog.write("single-instance: force-terminating pid \(app.processIdentifier)")
+                app.forceTerminate()
+            }
+        }
     }
 
     private func requestSmartRestorePermission() {
