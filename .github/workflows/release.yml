@@ -1,0 +1,34 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build (Release, ad-hoc signed)
+        run: |
+          xcodebuild -project Solo.xcodeproj -scheme Solo -configuration Release \
+            -destination 'platform=macOS' -derivedDataPath build \
+            CODE_SIGN_IDENTITY=- build
+
+      - name: Package
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/Build/Products/Release/Solo.app "Solo-${{ github.ref_name }}.zip"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            "Solo-${{ github.ref_name }}.zip" \
+            --title "Solo ${{ github.ref_name }}" \
+            --generate-notes
