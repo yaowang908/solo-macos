@@ -71,3 +71,14 @@ Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
   xcodegen). After editing it, validate with `xcodebuild -project Solo.xcodeproj
   -list` before building. Bracketed build-setting keys (e.g.
   `KEY[sdk=macosx*]`) break the parser unless quoted.
+
+## Releases
+
+- Publishing a release = pushing a semantic tag: `git tag vX.Y.Z && git push origin vX.Y.Z`.
+  `.github/workflows/release.yml` then builds Release on a macOS runner, zips
+  `Solo.app`, and publishes a GitHub Release with generated notes. Only tag when
+  the user asks for a release.
+- Before tagging, bump `MARKETING_VERSION` in the pbxproj (both configurations) to
+  match the tag, and make sure `README.md` reflects any behavior changes.
+- Release builds stay **ad-hoc signed and un-notarized** (see signing rule above);
+  the README documents the `xattr -cr` quarantine-clearing step for users.

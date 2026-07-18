@@ -48,6 +48,17 @@ The menu bar icon shows a filled moon while Solo Focus is active.
 - **The focus session lives in memory.** If Solo crashes mid-session, hidden apps stay hidden (recover them via Dock or `⌘Tab`).
 - **Prototype scope:** no settings window, no shortcut recorder, no ignore list, no launch-at-login, unsigned local builds only.
 
+## Install
+
+Grab `Solo-vX.Y.Z.zip` from the [Releases page](../../releases), unzip, and move
+`Solo.app` to `/Applications`. Because release builds are unsigned (not notarized),
+macOS quarantines the download — clear it once before first launch:
+
+```bash
+xattr -cr /Applications/Solo.app
+open /Applications/Solo.app
+```
+
 ## Building and running
 
 Requirements: macOS 14+, Apple Silicon, Xcode 16.
