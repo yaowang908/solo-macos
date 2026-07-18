@@ -21,6 +21,10 @@ Solo is a macOS menu bar utility (Swift/AppKit, macOS 14+, Apple Silicon). Read
   their identity in build products or change signing settings.
 - **Commit only when the user asks.** Keep the tree clean and report what is
   uncommitted; don't commit proactively.
+- **Use semantic (Conventional Commits) messages**: `<type>: <summary>` with types
+  `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `build`. Optional scope, e.g.
+  `fix(smart-restore): accept AXDialog minimized windows`. Body explains the why;
+  imperative mood; summary lowercase after the colon.
 - **Never launch the raw binary** (`Solo.app/Contents/MacOS/Solo`). Cross-app calls
   like `NSRunningApplication.hide()` silently fail outside a proper LaunchServices
   launch. Always `open Solo.app`, and install/run from `/Applications/Solo.app`.
