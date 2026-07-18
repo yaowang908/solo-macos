@@ -83,7 +83,14 @@ Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
 - Release builds stay **ad-hoc signed and un-notarized** (see signing rule above);
   the README documents the `xattr -cr` quarantine-clearing step for users.
 - **Homebrew tap**: `github.com/yaowang908/homebrew-tap` hosts `Casks/solo.rb`
-  (install: `brew install --cask --no-quarantine yaowang908/tap/solo`). After each
-  release, update the cask's `version` and `sha256`
-  (`shasum -a 256 Solo-vX.Y.Z.zip` on the published asset) and push the tap repo.
-  Verify with `brew fetch --cask yaowang908/tap/solo`.
+  (install: `brew install --cask --no-quarantine yaowang908/tap/solo`). Cask
+  updates are fully automated, two layers:
+  1. **Instant**: the release workflow's "Update Homebrew tap" step bumps
+     version + sha256 and pushes to the tap, authenticated by the
+     `TAP_GITHUB_TOKEN` secret (fine-grained PAT, Contents read/write on
+     homebrew-tap only). If that step starts failing while the release itself
+     succeeds, the PAT has likely expired — ask the user to rotate it and
+     re-run `gh secret set TAP_GITHUB_TOKEN -R yaowang908/solo-macos`.
+  2. **Backstop**: the tap's own `update-cask.yml` (daily cron + manual
+     dispatch) self-heals from the latest release with no cross-repo token.
+  After a release, verify with `brew fetch --cask yaowang908/tap/solo`.

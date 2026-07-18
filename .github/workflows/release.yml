@@ -32,3 +32,25 @@ jobs:
             "Solo-${{ github.ref_name }}.zip" \
             --title "Solo ${{ github.ref_name }}" \
             --generate-notes
+
+      - name: Update Homebrew tap
+        env:
+          TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="${{ github.ref_name }}"
+          version="${tag#v}"
+          sha=$(shasum -a 256 "Solo-${tag}.zip" | cut -d' ' -f1)
+          git clone --depth 1 "https://x-access-token:${TAP_TOKEN}@github.com/yaowang908/homebrew-tap.git" tap
+          cd tap
+          sed -i '' "s/^  version \".*\"/  version \"${version}\"/" Casks/solo.rb
+          sed -i '' "s/^  sha256 \".*\"/  sha256 \"${sha}\"/" Casks/solo.rb
+          if git diff --quiet; then
+            echo "Cask already at ${version}; nothing to do."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add Casks/solo.rb
+            git commit -m "chore: update solo cask to ${version}"
+            git push
+          fi
