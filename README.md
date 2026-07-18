@@ -69,22 +69,43 @@ xattr -cr /Applications/Solo.app
 open /Applications/Solo.app
 ```
 
+## Release vs. dev builds
+
+Two copies of Solo can coexist on one machine, each with its own home:
+
+| | Release | Dev |
+| --- | --- | --- |
+| **Location** | `/Applications/Solo.app` | `<repo>/build/Build/Products/Debug/Solo.app` |
+| **Installed by** | `brew install --cask …` (or manual download) | `./scripts/dev.sh` |
+| **Configuration** | Release (built by CI on tag push) | Debug (built locally) |
+| **Diagnostics** | none — logging is compiled out | appends to `/tmp/solo-debug.log` |
+| **Accessibility grant** | survives upgrades until the binary changes | must be re-granted after every rebuild |
+
+Rules of the road:
+
+- **Only one runs at a time, automatically.** Solo is single-instance: the newly
+  launched copy gracefully quits the other. Run `./scripts/dev.sh` and the
+  Homebrew copy steps aside; reopen `/Applications/Solo.app` and the dev copy
+  does. The departing copy restores any hidden apps before exiting.
+- **`/Applications/Solo.app` belongs to Homebrew.** Never copy a dev build there —
+  `brew upgrade` would clobber it, and brew refuses to install over a bundle it
+  doesn't own.
+- **Each copy needs its own Accessibility grant** (two "Solo" rows in System
+  Settings is normal). The dev copy's grant breaks on every rebuild because
+  ad-hoc-signed binaries change identity — see
+  `.codex/skills/regrant-accessibility/SKILL.md` for the re-grant flow. The
+  release copy is unaffected by dev rebuilds.
+
 ## Building and running
 
 Requirements: macOS 14+, Apple Silicon, Xcode 16.
 
 ```bash
-xcodebuild -project Solo.xcodeproj -scheme Solo -configuration Debug build
+./scripts/dev.sh
 ```
 
-Install the built app to a stable path and launch it from there (important for the Accessibility grant):
-
-```bash
-cp -R ~/Library/Developer/Xcode/DerivedData/Solo-*/Build/Products/Debug/Solo.app /Applications/
-open /Applications/Solo.app
-```
-
-Debug builds write diagnostics to `/tmp/solo-debug.log`; Release builds log nothing.
+That builds Debug into `./build` (gitignored) and launches the dev copy from the
+repo, taking over from any running release copy per the rules above.
 
 ## Project layout
 

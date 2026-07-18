@@ -27,7 +27,13 @@ Solo is a macOS menu bar utility (Swift/AppKit, macOS 14+, Apple Silicon). Read
   imperative mood; summary lowercase after the colon.
 - **Never launch the raw binary** (`Solo.app/Contents/MacOS/Solo`). Cross-app calls
   like `NSRunningApplication.hide()` silently fail outside a proper LaunchServices
-  launch. Always `open Solo.app`, and install/run from `/Applications/Solo.app`.
+  launch. Always `open Solo.app`.
+- **`/Applications/Solo.app` belongs to Homebrew.** Dev builds live in the repo:
+  `./scripts/dev.sh` builds Debug into `./build` (gitignored) and opens
+  `build/Build/Products/Debug/Solo.app`. Never copy a dev build over the brew
+  install. Solo is single-instance (newest launch gracefully terminates other
+  running copies), so opening a dev build stops the brew copy automatically — no
+  manual pkill needed.
 - **Agents cannot grant Accessibility or verify UI behavior.** The human must click
   the Settings toggle and confirm hide/restore behavior on screen. Instrument, hand
   over a short test script, and read the logs afterward.
@@ -61,9 +67,10 @@ Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
 
 ## Build, diagnostics, project file
 
-- Build: `xcodebuild -project Solo.xcodeproj -scheme Solo -configuration Debug build`
-  (SourceKit cross-file "Cannot find type" diagnostics in single-file context are
-  noise; trust xcodebuild).
+- Build + run dev: `./scripts/dev.sh` (or `xcodebuild -project Solo.xcodeproj
+  -scheme Solo -configuration Debug -derivedDataPath build build`). SourceKit
+  cross-file "Cannot find type" diagnostics in single-file context are noise;
+  trust xcodebuild.
 - Diagnostics: `DebugLog.write(...)` appends to `/tmp/solo-debug.log` in Debug
   builds only (`#if DEBUG`); it compiles to a no-op in Release. Use it instead of
   `NSLog`/unified logging — those proved unreliable to capture here.

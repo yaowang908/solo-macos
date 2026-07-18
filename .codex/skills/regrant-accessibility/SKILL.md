@@ -1,6 +1,6 @@
 ---
 name: regrant-accessibility
-description: Fix Smart Restore silently not working after a rebuild — reset stale Accessibility (TCC) grants and re-grant against a stable install path. Use when Smart Restore is inert, AXIsProcessTrusted() returns false despite the user having granted access, or after any rebuild of Solo.app.
+description: Fix Smart Restore silently not working after a rebuild — reset stale Accessibility (TCC) grants and re-grant the dev build. Use when Smart Restore is inert, AXIsProcessTrusted() returns false despite the user having granted access, or after any rebuild of Solo.app.
 ---
 
 # Re-grant Accessibility After Rebuild
@@ -19,37 +19,47 @@ cdhash, so the existing grant silently stops matching the new binary. The Settin
 pane still shows the old entry toggled ON — it just points at a dead build. Toggling
 it off/on does NOT fix it; the entry must be removed and re-added.
 
-This will recur after **every rebuild** until the project signs with a stable
-identity (e.g. an Apple Development certificate), which requires an Xcode account
-to be configured.
+This recurs after **every rebuild**. Only the dev copy is affected: the Homebrew
+release copy in `/Applications/Solo.app` keeps its own grant untouched.
 
-## Fix (repeat after each rebuild)
+## Dev vs release copies
 
-1. Quit Solo and wipe all stale grants (there may be several):
+- `/Applications/Solo.app` belongs to **Homebrew** (release build). Never overwrite
+  it with a dev build.
+- The dev build lives in the repo: `./scripts/dev.sh` builds Debug into `./build`
+  and opens `build/Build/Products/Debug/Solo.app`. Solo enforces single-instance:
+  the newly launched copy gracefully terminates any other running copy, so opening
+  the dev build automatically stops the brew copy (and vice versa).
+- Each copy gets its own Accessibility entry; two "Solo" rows in Settings is normal.
+
+## Fix (repeat after each dev rebuild)
+
+1. Clear stale grants (there may be several; the reset also removes the brew
+   copy's grant, which the user must then re-add if they use it):
 
    ```bash
-   pkill -x Solo
    tccutil reset Accessibility com.solo.Solo
    ```
 
-2. Install the fresh build to a stable path and launch it from there:
+   To keep the brew copy's grant intact, skip the reset and instead remove only
+   the dev entry manually in System Settings (select it, press −).
+
+2. Launch the fresh dev build (it stops any running copy itself):
 
    ```bash
-   rm -rf /Applications/Solo.app
-   cp -R "$(xcodebuild -project Solo.xcodeproj -scheme Solo -configuration Debug -showBuildSettings 2>/dev/null | awk '/ BUILT_PRODUCTS_DIR/{print $3}')/Solo.app" /Applications/Solo.app
-   open /Applications/Solo.app
+   ./scripts/dev.sh
    ```
 
 3. Have the user grant fresh (agents cannot do this step):
    - System Settings → Privacy & Security → Accessibility
-   - Solo should be absent (the reset removed it). Click **+**, press **⌘⇧G**,
-     enter `/Applications/Solo.app`, add it, toggle **ON**.
+   - Click **+**, press **⌘⇧G**, paste `<repo>/build/Build/Products/Debug/Solo.app`,
+     add it, toggle **ON**.
    - Solo polls `AXIsProcessTrusted()` every ~2 s, so Smart Restore goes live
      within seconds — no relaunch needed.
 
 4. Verify: switch to an app whose only window is minimized; the window should
-   restore. (If debug logging is compiled in, check `/tmp/solo-debug.log` for
-   `trusted=true` and `restore attempted, result=true`.)
+   restore. Debug builds log to `/tmp/solo-debug.log` — check for `trusted=true`
+   and `restore attempted, result=true`.
 
 ## Notes
 
@@ -59,6 +69,6 @@ to be configured.
   (`Solo.app/Contents/MacOS/Solo`) — cross-app calls like
   `NSRunningApplication.hide()` misbehave outside a proper LaunchServices launch.
   Always use `open`.
-- Permanent fix: switch `CODE_SIGN_STYLE`/`CODE_SIGN_IDENTITY` to a stable signing
-  identity once an Xcode account for the team is signed in (Settings → Accounts).
-  Until then, this re-grant flow is the cost of every rebuild.
+- Permanent fix would be a stable signing identity, but the user has chosen
+  ad-hoc-only signing (no personal identity in build products); this re-grant flow
+  is the accepted cost of each dev rebuild.
