@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run unit tests
+        run: |
+          xcodebuild test -project Solo.xcodeproj -scheme Solo \
+            -destination 'platform=macOS' -derivedDataPath build
