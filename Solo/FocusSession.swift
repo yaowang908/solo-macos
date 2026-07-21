@@ -2,9 +2,10 @@ import AppKit
 
 /// Solo Focus state machine (design D2/D7).
 ///
-/// Uses only NSWorkspace/NSRunningApplication — no Accessibility permission.
-/// A session records exactly the apps Solo hid so deactivation restores that
-/// exact set (and nothing the user hid independently).
+/// Uses only NSWorkspace/NSRunningApplication (via RunningAppProviding) — no
+/// Accessibility permission. A session records exactly the apps Solo asked to
+/// hide so deactivation restores that exact set (and nothing the user hid
+/// independently).
 @MainActor
 final class FocusSession {
     struct HiddenApp {
@@ -16,12 +17,18 @@ final class FocusSession {
     private(set) var hiddenApps: [HiddenApp]?
 
     private let activationGuard: ActivationGuard
+    private let provider: any RunningAppProviding
+    private let soloPid: pid_t
 
     /// Invoked after any state transition so the UI can re-render.
     var onStateChange: (() -> Void)?
 
-    init(activationGuard: ActivationGuard) {
+    init(activationGuard: ActivationGuard,
+         provider: any RunningAppProviding = WorkspaceAppProvider(),
+         soloPid: pid_t = ProcessInfo.processInfo.processIdentifier) {
         self.activationGuard = activationGuard
+        self.provider = provider
+        self.soloPid = soloPid
     }
 
     var isActive: Bool { hiddenApps != nil }
@@ -48,17 +55,15 @@ final class FocusSession {
 
         activationGuard.noteSelfOperation()
 
-        let workspace = NSWorkspace.shared
-        let soloPid = ProcessInfo.processInfo.processIdentifier
-        let frontmostPid = workspace.frontmostApplication?.processIdentifier
+        let frontmostPid = provider.frontmostPid
 
         var recorded: [HiddenApp] = []
-        for app in workspace.runningApplications {
+        for app in provider.apps {
             // Eligibility exclusions (solo-focus spec):
-            guard app.activationPolicy == .regular else { continue } // no background/menu-bar-only apps
-            guard !app.isHidden else { continue }                    // pre-hidden apps stay out of the session
-            guard app.processIdentifier != soloPid else { continue } // never hide Solo itself
-            guard app.processIdentifier != frontmostPid else { continue } // keep the current app untouched
+            guard app.isRegular else { continue }          // no background/menu-bar-only apps
+            guard !app.isHidden else { continue }          // pre-hidden apps stay out of the session
+            guard app.pid != soloPid else { continue }     // never hide Solo itself
+            guard app.pid != frontmostPid else { continue } // keep the current app untouched
 
             // Record intent, not the return value: `NSRunningApplication.hide()`
             // is documented to return whether the request "succeeded", but on
@@ -67,8 +72,7 @@ final class FocusSession {
             // makes restore impossible. Since `unhide()` is idempotent, recording
             // every app we asked to hide is both correct and safe.
             app.hide()
-            recorded.append(HiddenApp(pid: app.processIdentifier,
-                                      bundleIdentifier: app.bundleIdentifier))
+            recorded.append(HiddenApp(pid: app.pid, bundleIdentifier: app.bundleID))
         }
 
         hiddenApps = recorded
@@ -83,7 +87,7 @@ final class FocusSession {
         activationGuard.noteSelfOperation()
 
         for entry in apps {
-            guard let app = NSRunningApplication(processIdentifier: entry.pid) else {
+            guard let app = provider.app(pid: entry.pid) else {
                 continue // app quit mid-session: skip without error
             }
             // Unhide unconditionally. `unhide()` only ever unhides, so it is a

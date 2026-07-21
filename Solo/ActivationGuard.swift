@@ -9,15 +9,18 @@ import Foundation
 @MainActor
 final class ActivationGuard {
     private let quietPeriod: TimeInterval
+    private let now: () -> Date
     private var suppressUntil: Date = .distantPast
 
-    init(quietPeriod: TimeInterval = 0.5) {
+    /// `now` is injectable for tests; production uses the real clock.
+    init(quietPeriod: TimeInterval = 0.5, now: @escaping () -> Date = Date.init) {
         self.quietPeriod = quietPeriod
+        self.now = now
     }
 
     /// Call immediately before and after any Solo-initiated hide/unhide/raise.
     func noteSelfOperation() {
-        let candidate = Date().addingTimeInterval(quietPeriod)
+        let candidate = now().addingTimeInterval(quietPeriod)
         if candidate > suppressUntil {
             suppressUntil = candidate
         }
@@ -25,6 +28,6 @@ final class ActivationGuard {
 
     /// True while activations should be treated as self-caused and ignored.
     var isSuppressing: Bool {
-        Date() < suppressUntil
+        now() < suppressUntil
     }
 }

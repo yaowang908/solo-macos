@@ -16,7 +16,16 @@
 		BFIL00000000000000000007 /* ActivationGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000007 /* ActivationGuard.swift */; };
 		BFIL00000000000000000009 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000010 /* AppDelegate.swift */; };
 		BFIL00000000000000000011 /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000011 /* DebugLog.swift */; };
+		BFIL00000000000000000012 /* RunningAppProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000012 /* RunningAppProviding.swift */; };
 		BFIL00000000000000000008 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = PKGP00000000000000000001 /* KeyboardShortcuts */; };
+		BFIL00000000000000000020 /* ActivationGuardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000021 /* ActivationGuardTests.swift */; };
+		BFIL00000000000000000021 /* FocusSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000022 /* FocusSessionTests.swift */; };
+		BFIL00000000000000000022 /* WindowInspectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000023 /* WindowInspectorTests.swift */; };
+		BFIL00000000000000000023 /* ActivationGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000007 /* ActivationGuard.swift */; };
+		BFIL00000000000000000024 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000003 /* FocusSession.swift */; };
+		BFIL00000000000000000025 /* RunningAppProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000012 /* RunningAppProviding.swift */; };
+		BFIL00000000000000000026 /* WindowInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000005 /* WindowInspector.swift */; };
+		BFIL00000000000000000027 /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000011 /* DebugLog.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +39,12 @@
 		FREF00000000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FREF00000000000000000010 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FREF00000000000000000011 /* DebugLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLog.swift; sourceTree = "<group>"; };
+		FREF00000000000000000012 /* RunningAppProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningAppProviding.swift; sourceTree = "<group>"; };
 		FREF00000000000000000009 /* Solo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Solo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FREF00000000000000000020 /* SoloTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoloTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FREF00000000000000000021 /* ActivationGuardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationGuardTests.swift; sourceTree = "<group>"; };
+		FREF00000000000000000022 /* FocusSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSessionTests.swift; sourceTree = "<group>"; };
+		FREF00000000000000000023 /* WindowInspectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowInspectorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +56,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		PHAS00000000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -49,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				GRUP00000000000000000002 /* Solo */,
+				GRUP00000000000000000004 /* SoloTests */,
 				GRUP00000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,15 +87,27 @@
 				FREF00000000000000000006 /* PermissionMonitor.swift */,
 				FREF00000000000000000007 /* ActivationGuard.swift */,
 				FREF00000000000000000011 /* DebugLog.swift */,
+				FREF00000000000000000012 /* RunningAppProviding.swift */,
 				FREF00000000000000000008 /* Info.plist */,
 			);
 			path = Solo;
+			sourceTree = "<group>";
+		};
+		GRUP00000000000000000004 /* SoloTests */ = {
+			isa = PBXGroup;
+			children = (
+				FREF00000000000000000021 /* ActivationGuardTests.swift */,
+				FREF00000000000000000022 /* FocusSessionTests.swift */,
+				FREF00000000000000000023 /* WindowInspectorTests.swift */,
+			);
+			path = SoloTests;
 			sourceTree = "<group>";
 		};
 		GRUP00000000000000000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				FREF00000000000000000009 /* Solo.app */,
+				FREF00000000000000000020 /* SoloTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,6 +134,22 @@
 			productName = Solo;
 			productReference = FREF00000000000000000009 /* Solo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		TARG00000000000000000002 /* SoloTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CLST00000000000000000003 /* Build configuration list for PBXNativeTarget "SoloTests" */;
+			buildPhases = (
+				PHAS00000000000000000004 /* Sources */,
+				PHAS00000000000000000005 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SoloTests;
+			productName = SoloTests;
+			productReference = FREF00000000000000000020 /* SoloTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -133,6 +183,7 @@
 			projectRoot = "";
 			targets = (
 				TARG00000000000000000001 /* Solo */,
+				TARG00000000000000000002 /* SoloTests */,
 			);
 		};
 /* End PBXProject section */
@@ -161,6 +212,22 @@
 				BFIL00000000000000000006 /* PermissionMonitor.swift in Sources */,
 				BFIL00000000000000000007 /* ActivationGuard.swift in Sources */,
 				BFIL00000000000000000011 /* DebugLog.swift in Sources */,
+				BFIL00000000000000000012 /* RunningAppProviding.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHAS00000000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFIL00000000000000000020 /* ActivationGuardTests.swift in Sources */,
+				BFIL00000000000000000021 /* FocusSessionTests.swift in Sources */,
+				BFIL00000000000000000022 /* WindowInspectorTests.swift in Sources */,
+				BFIL00000000000000000023 /* ActivationGuard.swift in Sources */,
+				BFIL00000000000000000024 /* FocusSession.swift in Sources */,
+				BFIL00000000000000000025 /* RunningAppProviding.swift in Sources */,
+				BFIL00000000000000000026 /* WindowInspector.swift in Sources */,
+				BFIL00000000000000000027 /* DebugLog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +335,36 @@
 			};
 			name = Release;
 		};
+		CONF00000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.solo.SoloTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CONF00000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.solo.SoloTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -285,6 +382,15 @@
 			buildConfigurations = (
 				CONF00000000000000000003 /* Debug */,
 				CONF00000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CLST00000000000000000003 /* Build configuration list for PBXNativeTarget "SoloTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CONF00000000000000000005 /* Debug */,
+				CONF00000000000000000006 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

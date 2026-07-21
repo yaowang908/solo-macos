@@ -96,26 +96,33 @@ enum WindowInspector {
     }
 
     /// Subroles that must never be restored even if they somehow end up minimized.
-    private static let excludedSubroles: Set<String> = [
+    static let excludedSubroles: Set<String> = [
         kAXSystemDialogSubrole as String,
         kAXFloatingWindowSubrole as String,
         kAXSystemFloatingWindowSubrole as String,
     ]
 
-    /// A minimized window eligible for restore. Minimized-ness is itself the strong
+    /// Pure eligibility decision (unit-tested). Minimized-ness is itself the strong
     /// signal — sheets, popovers, and modal dialogs cannot be user-minimized to the
     /// Dock — so this is a blocklist, not an allowlist: requiring
     /// `subrole == AXStandardWindow` wrongly rejects Outlook and Notes, whose
     /// minimized main windows report `AXDialog` on current macOS.
-    private static func isRestorableMinimized(_ window: AXUIElement) -> Bool {
-        guard boolAttribute(window, kAXMinimizedAttribute) else { return false }
-        guard (copyAttribute(window, kAXRoleAttribute) as? String) == (kAXWindowRole as String) else { return false }
-        if let subrole = copyAttribute(window, kAXSubroleAttribute) as? String,
-           excludedSubroles.contains(subrole) {
+    static func isRestorable(role: String?, subrole: String?, minimized: Bool, area: CGFloat) -> Bool {
+        guard minimized else { return false }
+        guard role == (kAXWindowRole as String) else { return false }
+        if let subrole, excludedSubroles.contains(subrole) {
             return false
         }
         // Same "real window" size floor as the CGWindowList visibility check.
-        return windowArea(window) >= minWidth * minHeight
+        return area >= minWidth * minHeight
+    }
+
+    /// A minimized window eligible for restore (AX reads feeding `isRestorable`).
+    private static func isRestorableMinimized(_ window: AXUIElement) -> Bool {
+        isRestorable(role: copyAttribute(window, kAXRoleAttribute) as? String,
+                     subrole: copyAttribute(window, kAXSubroleAttribute) as? String,
+                     minimized: boolAttribute(window, kAXMinimizedAttribute),
+                     area: windowArea(window))
     }
 
     private static func windowArea(_ window: AXUIElement) -> CGFloat {
@@ -127,12 +134,28 @@ enum WindowInspector {
         return size.width * size.height
     }
 
-    /// Selection priority: main window → largest → any (smart-restore spec).
-    private static func selectWindow(_ windows: [AXUIElement]) -> AXUIElement? {
-        guard !windows.isEmpty else { return nil }
-        if let main = windows.first(where: { boolAttribute($0, kAXMainAttribute) }) {
+    /// Pure selection input (unit-tested via `selectIndex`).
+    struct MinimizedCandidate {
+        let isMain: Bool
+        let area: CGFloat
+    }
+
+    /// Pure selection priority: main window → largest → any (smart-restore spec).
+    static func selectIndex(_ candidates: [MinimizedCandidate]) -> Int? {
+        guard !candidates.isEmpty else { return nil }
+        if let main = candidates.firstIndex(where: \.isMain) {
             return main
         }
-        return windows.max(by: { windowArea($0) < windowArea($1) })
+        return candidates.indices.max(by: { candidates[$0].area < candidates[$1].area })
+    }
+
+    /// AX reads feeding the pure selection.
+    private static func selectWindow(_ windows: [AXUIElement]) -> AXUIElement? {
+        let candidates = windows.map {
+            MinimizedCandidate(isMain: boolAttribute($0, kAXMainAttribute),
+                               area: windowArea($0))
+        }
+        guard let index = selectIndex(candidates) else { return nil }
+        return windows[index]
     }
 }
