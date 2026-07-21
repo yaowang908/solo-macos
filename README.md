@@ -107,6 +107,14 @@ Requirements: macOS 14+, Apple Silicon, Xcode 16.
 That builds Debug into `./build` (gitignored) and launches the dev copy from the
 repo, taking over from any running release copy per the rules above.
 
+Unit tests (`SoloTests/`) cover the session logic, the suppression guard, and
+window eligibility/selection — including regression tests for the macOS quirks
+documented in `AGENTS.md`. CI runs them on every push:
+
+```bash
+xcodebuild test -project Solo.xcodeproj -scheme Solo -destination 'platform=macOS'
+```
+
 ## Project layout
 
 Specs and design live under `openspec/` (source of truth in `openspec/specs/`). The Swift sources are small single-responsibility types under `Solo/` — `FocusSession` (Solo Focus), `SmartRestoreController` + `WindowInspector` (Smart Restore), `PermissionMonitor` (Accessibility flow), `ActivationGuard` (suppresses Solo's own activation side effects), `StatusItemController` (menu bar UI).

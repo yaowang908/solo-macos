@@ -65,6 +65,26 @@ Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
 - Treat every AX read/write as fallible; any failure is a silent no-op for that
   activation.
 
+## Testing
+
+- Run `xcodebuild test -project Solo.xcodeproj -scheme Solo -destination
+  'platform=macOS' -derivedDataPath build` before committing code changes; CI
+  (`.github/workflows/ci.yml`) runs the same on every push/PR.
+- Tests live in `SoloTests/` (Swift Testing, `import Testing`). The `SoloTests`
+  target has **no TEST_HOST**: it compiles the tested sources directly
+  (ActivationGuard, FocusSession, RunningAppProviding, WindowInspector, DebugLog),
+  so tests never launch the app or trip its permission prompts. If a tested file
+  gains a new source-file dependency, add that file to the SoloTests sources phase
+  in the pbxproj too.
+- Testable-by-design seams: `ActivationGuard` takes an injectable clock;
+  `FocusSession` takes a `RunningAppProviding` (fakes in FocusSessionTests);
+  `WindowInspector.isRestorable`/`selectIndex` are pure. Keep policy decisions in
+  those pure/seamed layers — anything touching live AX or TCC is untestable in CI
+  and stays manual (see the regrant-accessibility skill).
+- The regression tests encode hard-won platform lessons (hide() returning false,
+  AXDialog minimized subroles). If one fails after a "cleanup", the cleanup is
+  wrong — see Platform gotchas above.
+
 ## Build, diagnostics, project file
 
 - Build + run dev: `./scripts/dev.sh` (or `xcodebuild -project Solo.xcodeproj
