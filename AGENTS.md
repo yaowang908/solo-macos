@@ -9,6 +9,11 @@ Solo is a macOS menu bar utility (Swift/AppKit, macOS 14+, Apple Silicon). Read
   the OpenSpec skills (propose → apply → sync → archive); completed changes live in
   `openspec/changes/archive/`. If implementation diverges from a spec, update the
   spec in the same session — never leave them contradicting each other.
+- **Queued changes stack**: when multiple proposals are parked, later deltas are
+  written assuming earlier ones have landed, so apply in the declared order and
+  sync each change's deltas at its close-out. A later delta may legitimately
+  rewrite or drop an earlier change's scenario (e.g. Restore Windows → Restore
+  Apps); main reflects the top of the stack, so don't "restore" superseded text.
 - **README.md**: human-facing. Update it whenever a feature, menu item, shortcut,
   permission behavior, or limitation changes.
 - **AGENTS.md** (this file): update it when a new rule, gotcha, or workflow lesson
@@ -44,9 +49,15 @@ Every rebuild changes the ad-hoc cdhash, which **silently invalidates the
 Accessibility (TCC) grant** — Smart Restore goes inert with `trusted=false` while
 System Settings still shows a stale entry toggled ON. After each rebuild that needs
 Smart Restore testing, follow `.codex/skills/regrant-accessibility/SKILL.md`:
-`tccutil reset Accessibility com.solo.Solo`, copy the fresh build to
-`/Applications/Solo.app`, `open` it, then have the user re-add it in
+`tccutil reset Accessibility com.solo.Solo`, launch via `./scripts/dev.sh`, then
+have the user re-add `<repo>/build/Build/Products/Debug/Solo.app` in
 Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
+
+**Triage "Smart Restore doesn't work" from the log, not from guesses.** Read the
+skip reason in `/tmp/solo-debug.log` before debugging: `trusted=false` = the
+treadmill above; `skip: excluded` = the app is on the Excluded Apps list
+(`defaults read com.solo.Solo excludedBundleIds`) — likely left over from a
+verification pass, working as specced, not a bug. Both false alarms happened live.
 
 ## Platform gotchas (all verified live on this machine, macOS 26)
 
@@ -64,6 +75,16 @@ Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
   `openspec/specs/smart-restore/spec.md`), not a bug to chase.
 - Treat every AX read/write as fallible; any failure is a silent no-op for that
   activation.
+- **The suppression bracket swallows Solo's own follow-up events.** Anything
+  wrapped in `ActivationGuard.noteSelfOperation()` makes the activation observer
+  ignore the next ~500 ms — so a user-initiated action (e.g. choosing an app in
+  Restore Apps) must NOT rely on the observer to finish the job. Call the
+  restore/inspection path directly (`SmartRestoreController.
+  restoreWindowIfOnlyMinimized(pid:)` pattern); explicit intent bypasses
+  suppression by design. Found live: menu-restored Tailscale stayed minimized.
+- An `NSMenuItem` that owns a submenu **never fires its own action** — put the
+  fallback action inside the submenu (e.g. Restore All) and leave the parent
+  item's action nil.
 
 ## Testing
 
@@ -77,10 +98,13 @@ Privacy & Security → Accessibility. Batch code changes to minimize rebuilds.
   gains a new source-file dependency, add that file to the SoloTests sources phase
   in the pbxproj too.
 - Testable-by-design seams: `ActivationGuard` takes an injectable clock;
-  `FocusSession` takes a `RunningAppProviding` (fakes in FocusSessionTests);
-  `WindowInspector.isRestorable`/`selectIndex` are pure. Keep policy decisions in
-  those pure/seamed layers — anything touching live AX or TCC is untestable in CI
-  and stays manual (see the regrant-accessibility skill).
+  `FocusSession` takes a `RunningAppProviding` plus an `excludedBundleIds`
+  closure (fakes in FocusSessionTests); `WindowInspector.isRestorable`/
+  `selectIndex` are pure. Keep policy decisions in those pure/seamed layers —
+  new session rules (exclusions, partial restore, auto-end) all landed as
+  closure/protocol-injected logic with unit tests, and that's the pattern to
+  continue. Anything touching live AX or TCC is untestable in CI and stays
+  manual (see the regrant-accessibility skill).
 - The regression tests encode hard-won platform lessons (hide() returning false,
   AXDialog minimized subroles). If one fails after a "cleanup", the cleanup is
   wrong — see Platform gotchas above.

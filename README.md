@@ -8,13 +8,15 @@ It lives entirely in the menu bar: no Dock icon, no windows, negligible resource
 
 ### 🌙 Solo Focus — hide everything else
 
-One shortcut (`⌃⌥⌘S`) or one menu click hides every other app, leaving only the app you're working in. Toggle again and **exactly** the apps Solo hid come back — nothing more, nothing less:
+One shortcut (`⌃⌥⌘S` by default — configurable in Settings, or clearable if you'd rather go menu-only) or one menu click hides every other app, leaving only the app you're working in. Toggle again and **exactly** the apps Solo hid come back — nothing more, nothing less:
 
 - Apps you had already hidden yourself (`⌘H`) stay hidden.
 - Apps you manually unhide mid-session aren't touched on restore.
 - Apps that quit during the session are skipped silently.
 - Minimized windows stay minimized through the round trip.
 - Quitting Solo mid-session restores the hidden apps first.
+- Need one app back without ending focus? *Restore Apps ▸* lists what's hidden —
+  bring them back one at a time (restoring the last one ends the session).
 
 Solo Focus needs **no permissions** — it uses only standard macOS app hiding, which the system animates natively.
 
@@ -30,23 +32,45 @@ macOS has a long-standing annoyance: `⌘Tab` to an app whose windows are all mi
 
 Smart Restore requires macOS **Accessibility** permission (it's the API for reading and un-minimizing other apps' windows). Solo asks only when Smart Restore needs it, explains why, and deep-links to the right Settings pane. Decline and Smart Restore simply switches off — Solo Focus is unaffected. Grant it later and it goes live within seconds, no relaunch needed.
 
+### 🚫 Excluded Apps
+
+A shared exclusion list protects apps from both behaviors: Solo Focus never hides
+them (keep your music player or timer visible while focusing), and Smart Restore
+never touches their windows. Exclude the app you were just in straight from the
+menu bar (*Excluded Apps ▸*), or manage the list in Settings — including apps
+that aren't running. The list applies from the next action: an app hidden by an
+in-flight focus session is still restored normally on toggle-off.
+
+### ⌨️ Configurable shortcut
+
+Record any combination for Toggle Solo Focus in Settings. The recorder warns when
+a combo collides with a macOS system shortcut, changes take effect instantly, and
+everything survives relaunches. Prefer no global hotkey at all? Clear it (⊗) and
+Solo becomes menu-only until you record one again.
+
 ## The menu
 
 | Item | What it does |
 | --- | --- |
 | **Toggle Solo Focus** | Enter/exit focus (same as `⌃⌥⌘S`) |
-| **Restore Windows** | Exit focus explicitly (enabled only during a session) |
+| **Restore Apps ▸** | During a session: Restore All, or bring back hidden apps one at a time |
 | **Smart Restore Minimized Windows** | On/off checkbox; notes when permission is missing |
+| **Excluded Apps ▸** | Quick-exclude the app you were just in, and manage the exclusion list |
+| **Settings…** | Opens Settings: shortcut configuration and the Excluded Apps list |
 | **Quit Solo** | Quits (restoring any hidden apps first). Deliberately has no ⌘Q shortcut |
 
 The menu bar icon shows a filled moon while Solo Focus is active.
 
 ## Known limitations
 
+- **Shortcut conflicts with other apps' global hotkeys can't be detected.** The
+  recorder warns about macOS system shortcuts, but macOS offers no way to see
+  other apps' global hotkeys. If your shortcut doesn't respond, another app
+  probably owns it — record a different combination in Settings.
 - **`⌘Tab` back to the app you're already in does nothing.** If you minimize a window and the app *stays active* (its name still in the menu bar), re-selecting it with `⌘Tab` produces no system event at all, so Solo cannot react. This is a macOS platform constraint on activation-based observation, not a bug. **Workaround:** click the app's Dock icon (macOS restores the window natively), or switch to another app and back.
 - **Rebuilding invalidates the Accessibility grant.** Local builds are ad-hoc signed, and macOS ties the permission to the exact binary. After every rebuild the grant must be redone — see the `regrant-accessibility` skill (`.codex/skills/regrant-accessibility/SKILL.md`) for the exact steps.
 - **The focus session lives in memory.** If Solo crashes mid-session, hidden apps stay hidden (recover them via Dock or `⌘Tab`).
-- **Prototype scope:** no settings window, no shortcut recorder, no ignore list, no launch-at-login, unsigned local builds only.
+- **Not yet built:** Launch at Login, and signed/notarized builds (hence the quarantine-clearing step on install).
 
 ## Install
 
@@ -117,4 +141,4 @@ xcodebuild test -project Solo.xcodeproj -scheme Solo -destination 'platform=macO
 
 ## Project layout
 
-Specs and design live under `openspec/` (source of truth in `openspec/specs/`). The Swift sources are small single-responsibility types under `Solo/` — `FocusSession` (Solo Focus), `SmartRestoreController` + `WindowInspector` (Smart Restore), `PermissionMonitor` (Accessibility flow), `ActivationGuard` (suppresses Solo's own activation side effects), `StatusItemController` (menu bar UI).
+Specs and design live under `openspec/` (source of truth in `openspec/specs/`; completed changes in `openspec/changes/archive/`). The Swift sources are small single-responsibility types under `Solo/` — `FocusSession` (Solo Focus sessions incl. partial restore), `SmartRestoreController` + `WindowInspector` (Smart Restore), `ExcludedApps` (the exclusion list), `SettingsWindowController` + `SettingsView` (Settings UI), `PermissionMonitor` (Accessibility flow), `ActivationGuard` (suppresses Solo's own activation side effects), `StatusItemController` (menu bar UI), `RunningAppProviding` (the NSWorkspace seam that makes the session logic unit-testable).
