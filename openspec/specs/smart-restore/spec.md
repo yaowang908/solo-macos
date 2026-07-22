@@ -7,7 +7,7 @@ Activation-driven window recovery: when an activated app has no visible normal w
 ## Requirements
 
 ### Requirement: Restore a minimized window on activation
-When Smart Restore is enabled and an eligible application becomes active, Solo SHALL check whether the app has any visible, non-minimized normal window on the current Space. If it has none but has at least one minimized normal window, Solo SHALL un-minimize exactly one selected window, raise it, and give it keyboard focus. If the app has a visible normal window, Solo MUST take no action.
+When Smart Restore is enabled and an eligible application becomes active, Solo SHALL check whether the app has any visible, non-minimized normal window on the current Space. If it has none but has at least one minimized normal window, Solo SHALL un-minimize exactly one selected window, raise it, and give it keyboard focus. If the app has a visible normal window, Solo MUST take no action. Applications on the Excluded Apps list MUST never be acted on: their activations are ignored entirely.
 
 #### Scenario: Only window is minimized
 - **WHEN** the user activates an app whose only normal window is minimized
@@ -28,6 +28,10 @@ When Smart Restore is enabled and an eligible application becomes active, Solo S
 #### Scenario: Re-selecting the already-active app is out of scope
 - **WHEN** the active app's windows are all minimized and the user re-selects that same app (e.g. `Command+Tab` back to it) without focus ever leaving it
 - **THEN** Solo takes no action, because macOS emits no activation event for re-selecting the active app (verified limitation of activation-based observation; a Dock icon click on that app is handled natively by macOS itself)
+
+#### Scenario: Excluded app is never auto-restored
+- **WHEN** an app on the Excluded Apps list becomes active with only minimized windows
+- **THEN** Solo takes no action
 
 ### Requirement: Window selection priority
 When multiple minimized normal windows exist, Solo SHALL select in this order: (1) the app's main or focused document window if identifiable, (2) the largest minimized normal window, (3) any eligible minimized normal window. Non-normal windows (panels, sheets, modal dialogs, full-screen windows) MUST NOT be selected.
