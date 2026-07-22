@@ -17,6 +17,9 @@
 		BFIL00000000000000000009 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000010 /* AppDelegate.swift */; };
 		BFIL00000000000000000011 /* DebugLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000011 /* DebugLog.swift */; };
 		BFIL00000000000000000012 /* RunningAppProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000012 /* RunningAppProviding.swift */; };
+		BFIL00000000000000000013 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000013 /* SettingsWindowController.swift */; };
+		BFIL00000000000000000014 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000014 /* SettingsView.swift */; };
+		BFIL00000000000000000015 /* ExcludedApps.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000015 /* ExcludedApps.swift */; };
 		BFIL00000000000000000008 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = PKGP00000000000000000001 /* KeyboardShortcuts */; };
 		BFIL00000000000000000020 /* ActivationGuardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000021 /* ActivationGuardTests.swift */; };
 		BFIL00000000000000000021 /* FocusSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FREF00000000000000000022 /* FocusSessionTests.swift */; };
@@ -40,6 +43,9 @@
 		FREF00000000000000000010 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FREF00000000000000000011 /* DebugLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLog.swift; sourceTree = "<group>"; };
 		FREF00000000000000000012 /* RunningAppProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningAppProviding.swift; sourceTree = "<group>"; };
+		FREF00000000000000000013 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		FREF00000000000000000014 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		FREF00000000000000000015 /* ExcludedApps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcludedApps.swift; sourceTree = "<group>"; };
 		FREF00000000000000000009 /* Solo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Solo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FREF00000000000000000020 /* SoloTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoloTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FREF00000000000000000021 /* ActivationGuardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationGuardTests.swift; sourceTree = "<group>"; };
@@ -88,6 +94,9 @@
 				FREF00000000000000000007 /* ActivationGuard.swift */,
 				FREF00000000000000000011 /* DebugLog.swift */,
 				FREF00000000000000000012 /* RunningAppProviding.swift */,
+				FREF00000000000000000013 /* SettingsWindowController.swift */,
+				FREF00000000000000000014 /* SettingsView.swift */,
+				FREF00000000000000000015 /* ExcludedApps.swift */,
 				FREF00000000000000000008 /* Info.plist */,
 			);
 			path = Solo;
@@ -213,6 +222,9 @@
 				BFIL00000000000000000007 /* ActivationGuard.swift in Sources */,
 				BFIL00000000000000000011 /* DebugLog.swift in Sources */,
 				BFIL00000000000000000012 /* RunningAppProviding.swift in Sources */,
+				BFIL00000000000000000013 /* SettingsWindowController.swift in Sources */,
+				BFIL00000000000000000014 /* SettingsView.swift in Sources */,
+				BFIL00000000000000000015 /* ExcludedApps.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -16,10 +16,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let activationGuard = ActivationGuard()
     private let permissionMonitor = PermissionMonitor()
-    private lazy var focusSession = FocusSession(activationGuard: activationGuard)
+    private let excludedApps = ExcludedApps()
+    private lazy var focusSession = FocusSession(
+        activationGuard: activationGuard,
+        excludedBundleIds: { [excludedApps] in excludedApps.bundleIds }
+    )
 
     private var statusController: StatusItemController!
     private var smartRestore: SmartRestoreController!
+    private lazy var settingsController = SettingsWindowController(excludedApps: excludedApps)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         terminateOtherInstances()
@@ -35,7 +40,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             focusSession: focusSession,
             activationGuard: activationGuard,
             isEnabled: smartRestoreEnabled,
-            trustProvider: { [weak self] in self?.permissionMonitor.isTrusted ?? false }
+            trustProvider: { [weak self] in self?.permissionMonitor.isTrusted ?? false },
+            excludedBundleIds: { [excludedApps] in excludedApps.bundleIds }
         )
 
         statusController = StatusItemController()
@@ -137,6 +143,10 @@ extension AppDelegate: StatusItemDelegate {
         statusController.refresh()
     }
 
+    func openSettings() {
+        settingsController.show()
+    }
+
     func toggleSmartRestore() {
         let newValue = !smartRestore.isEnabled
         setSmartRestoreEnabled(newValue)
@@ -150,8 +160,53 @@ extension AppDelegate: StatusItemDelegate {
         NSApp.terminate(nil)
     }
 
+    func restoreApp(pid: pid_t) {
+        focusSession.restore(pid: pid)
+        // The menu choice is explicit intent: bring the app frontmost, and if
+        // its only windows are minimized, restore one (when Smart Restore is
+        // operational; without Accessibility this degrades to unhide+activate).
+        NSRunningApplication(processIdentifier: pid)?.activate()
+        smartRestore.restoreWindowIfOnlyMinimized(pid: pid)
+        statusController.refresh()
+    }
+
+    func excludeApp(bundleId: String) {
+        excludedApps.add(bundleId)
+    }
+
+    func unexcludeApp(bundleId: String) {
+        excludedApps.remove(bundleId)
+    }
+
     var isFocusActive: Bool { focusSession.isActive }
     var isManagingWindows: Bool { focusSession.isManaging }
     var isSmartRestoreEnabled: Bool { smartRestore.isEnabled }
     var smartRestoreNeedsPermission: Bool { !permissionMonitor.isTrusted }
+
+    var excludedAppEntries: [(bundleId: String, name: String, icon: NSImage?)] {
+        excludedApps.bundleIds
+            .map { id in
+                let info = ExcludedApps.displayInfo(for: id)
+                return (id, info.name, info.icon)
+            }
+            .sorted { $0.1.localizedCaseInsensitiveCompare($1.1) == .orderedAscending }
+    }
+
+    var quickAddCandidate: (bundleId: String, name: String)? {
+        smartRestore.lastActiveApp
+    }
+
+    var sessionAppEntries: [(pid: pid_t, name: String, icon: NSImage?)] {
+        (focusSession.hiddenApps ?? []).map { entry in
+            if let app = NSRunningApplication(processIdentifier: entry.pid) {
+                return (entry.pid, app.localizedName ?? entry.bundleIdentifier ?? "pid \(entry.pid)", app.icon)
+            }
+            // App quit mid-session: resolve what we can from the bundle id.
+            if let bundleId = entry.bundleIdentifier {
+                let info = ExcludedApps.displayInfo(for: bundleId)
+                return (entry.pid, info.name, info.icon)
+            }
+            return (entry.pid, "pid \(entry.pid)", nil)
+        }
+    }
 }

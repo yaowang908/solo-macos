@@ -19,16 +19,21 @@ final class FocusSession {
     private let activationGuard: ActivationGuard
     private let provider: any RunningAppProviding
     private let soloPid: pid_t
+    /// Bundle ids protected from hiding (the Excluded Apps list), read at
+    /// activation time only — session records are unaffected by later edits.
+    private let excludedBundleIds: () -> Set<String>
 
     /// Invoked after any state transition so the UI can re-render.
     var onStateChange: (() -> Void)?
 
     init(activationGuard: ActivationGuard,
          provider: any RunningAppProviding = WorkspaceAppProvider(),
-         soloPid: pid_t = ProcessInfo.processInfo.processIdentifier) {
+         soloPid: pid_t = ProcessInfo.processInfo.processIdentifier,
+         excludedBundleIds: @escaping () -> Set<String> = { [] }) {
         self.activationGuard = activationGuard
         self.provider = provider
         self.soloPid = soloPid
+        self.excludedBundleIds = excludedBundleIds
     }
 
     var isActive: Bool { hiddenApps != nil }
@@ -56,6 +61,7 @@ final class FocusSession {
         activationGuard.noteSelfOperation()
 
         let frontmostPid = provider.frontmostPid
+        let excluded = excludedBundleIds()
 
         var recorded: [HiddenApp] = []
         for app in provider.apps {
@@ -64,6 +70,7 @@ final class FocusSession {
             guard !app.isHidden else { continue }          // pre-hidden apps stay out of the session
             guard app.pid != soloPid else { continue }     // never hide Solo itself
             guard app.pid != frontmostPid else { continue } // keep the current app untouched
+            if let bundleId = app.bundleID, excluded.contains(bundleId) { continue } // excluded apps stay visible
 
             // Record intent, not the return value: `NSRunningApplication.hide()`
             // is documented to return whether the request "succeeded", but on
@@ -75,7 +82,27 @@ final class FocusSession {
             recorded.append(HiddenApp(pid: app.pid, bundleIdentifier: app.bundleID))
         }
 
-        hiddenApps = recorded
+        // Nothing to hide → no session: "active" always implies at least one
+        // app is Solo-hidden (restore-apps-menu spec).
+        hiddenApps = recorded.isEmpty ? nil : recorded
+        activationGuard.noteSelfOperation()
+        onStateChange?()
+    }
+
+    /// Restore a single recorded app without ending the session (partial
+    /// restore). Pruning the record keeps every consumer consistent: the menu
+    /// list shrinks, Restore All handles only the remainder, and Smart Restore
+    /// stops ignoring the app. When the record empties, the session ends
+    /// exactly as deactivate() would. Unknown pids are a no-op; a recorded app
+    /// that has quit is pruned silently.
+    func restore(pid: pid_t) {
+        guard var apps = hiddenApps,
+              let index = apps.firstIndex(where: { $0.pid == pid }) else { return }
+
+        activationGuard.noteSelfOperation()
+        provider.app(pid: pid)?.unhide()
+        apps.remove(at: index)
+        hiddenApps = apps.isEmpty ? nil : apps
         activationGuard.noteSelfOperation()
         onStateChange?()
     }
