@@ -77,15 +77,18 @@ The menu bar icon shows a filled moon while Solo Focus is active.
 ### Homebrew
 
 ```bash
-brew install --cask --no-quarantine yaowang908/tap/solo
+brew install --cask yaowang908/tap/solo
+xattr -cr /Applications/Solo.app
+open /Applications/Solo.app
 ```
 
-(`--no-quarantine` is needed because release builds are unsigned — see below.)
+Release builds are ad-hoc signed and not notarized, so clear quarantine before
+first launch. Homebrew no longer accepts `--no-quarantine`.
 
 ### Manual
 
 Grab `Solo-vX.Y.Z.zip` from the [Releases page](../../releases), unzip, and move
-`Solo.app` to `/Applications`. Because release builds are unsigned (not notarized),
+`Solo.app` to `/Applications`. Because release builds are ad-hoc signed and not notarized,
 macOS quarantines the download — clear it once before first launch:
 
 ```bash

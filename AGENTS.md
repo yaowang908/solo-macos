@@ -134,8 +134,10 @@ verification pass, working as specced, not a bug. Both false alarms happened liv
 - Release builds stay **ad-hoc signed and un-notarized** (see signing rule above);
   the README documents the `xattr -cr` quarantine-clearing step for users.
 - **Homebrew tap**: `github.com/yaowang908/homebrew-tap` hosts `Casks/solo.rb`
-  (install: `brew install --cask --no-quarantine yaowang908/tap/solo`). Cask
-  updates are fully automated, two layers:
+  (install: `brew install --cask yaowang908/tap/solo`, then
+  `xattr -cr /Applications/Solo.app` before first launch). Homebrew no longer
+  accepts `--no-quarantine`; don't include it in install instructions. Cask updates
+  are fully automated, two layers:
   1. **Instant**: the release workflow's "Update Homebrew tap" step bumps
      version + sha256 and pushes to the tap, authenticated by the
      `TAP_GITHUB_TOKEN` secret (fine-grained PAT, Contents read/write on
