@@ -147,3 +147,7 @@ verification pass, working as specced, not a bug. Both false alarms happened liv
   2. **Backstop**: the tap's own `update-cask.yml` (daily cron + manual
      dispatch) self-heals from the latest release with no cross-repo token.
   After a release, verify with `brew fetch --cask yaowang908/tap/solo`.
+
+## Cursor Cloud specific instructions
+
+Cloud Agent machines are Linux. Solo needs macOS 14+, Apple Silicon, and Xcode 16, so `xcodebuild`, `./scripts/dev.sh`, and `SoloTests/` cannot run here. A missing `xcodebuild` is not a failed environment setup. Verify Solo changes on a Mac with the test command in the Testing section.
